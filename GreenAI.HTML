@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GreenAI - Nông thôn xanh</title>
+
+<style>
+    body{
+        font-family: Arial, sans-serif;
+        margin:0;
+        background:#f4f7f6;
+        color:#333;
+    }
+
+    header{
+        background:#2e7d32;
+        color:white;
+        padding:15px;
+        text-align:center;
+    }
+
+    section{
+        background:white;
+        margin:20px;
+        padding:20px;
+        border-radius:10px;
+        box-shadow:0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    h2{
+        color:#2e7d32;
+    }
+
+    input, button{
+        padding:10px;
+        margin:5px 0;
+        border-radius:6px;
+        border:1px solid #ccc;
+        font-size:16px;
+    }
+
+    button{
+        background:#2e7d32;
+        color:white;
+        border:none;
+        cursor:pointer;
+    }
+
+    button:hover{
+        background:#1b5e20;
+    }
+
+    #result{
+        margin-top:10px;
+        font-weight:bold;
+        color:#1565c0;
+    }
+
+    footer{
+        text-align:center;
+        padding:15px;
+        background:#2e7d32;
+        color:white;
+        margin-top:30px;
+    }
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>🌱 GreenAI</h1>
+    <p>Công nghệ xanh – Nông thôn sạch</p>
+</header>
+
+<!-- ================= TÌM KIẾM RÁC ================= -->
+<section>
+    <h2>🔎 Tìm kiếm loại rác thải</h2>
+
+    <input type="text" id="searchInput" placeholder="Nhập tên rác (chai nhựa, pin, thức ăn...)">
+    <button onclick="searchWaste()">Tìm kiếm</button>
+
+    <div id="searchResult"></div>
+</section>
+
+<!-- ================= PHÂN LOẠI RÁC ================= -->
+<section>
+    <h2>♻️ Phân loại rác bằng AI (mô phỏng)</h2>
+
+    <p>Nhập tên rác hoặc mô tả để AI phân loại:</p>
+    <input type="text" id="wasteInput" placeholder="Ví dụ: chai nhựa">
+    <button onclick="classifyWaste()">Phân loại</button>
+
+    <div id="result"></div>
+</section>
+
+<!-- ================= ĐỊNH VỊ GPS ================= -->
+<section>
+    <h2>📍 Định vị điểm rác</h2>
+
+    <button onclick="getLocation()">Lấy vị trí hiện tại</button>
+
+    <p id="location"></p>
+
+    <iframe id="mapFrame"
+        width="100%"
+        height="300"
+        style="border-radius:10px;border:none;">
+    </iframe>
+</section>
+
+<footer>
+    GreenAI © 2026 | Giải pháp AI cho môi trường nông thôn
+</footer>
+
+<script>
+
+/* ================= CƠ SỞ DỮ LIỆU RÁC ================= */
+
+const wasteDatabase = {
+    "chai nhựa": {
+        type:"Rác tái chế",
+        guide:"Rửa sạch và bỏ vào thùng tái chế."
+    },
+    "lon nước": {
+        type:"Rác tái chế",
+        guide:"Thu gom riêng để tái chế kim loại."
+    },
+    "thức ăn thừa": {
+        type:"Rác hữu cơ",
+        guide:"Ủ làm phân compost hoặc cho chăn nuôi."
+    },
+    "lá cây": {
+        type:"Rác hữu cơ",
+        guide:"Có thể ủ thành phân bón."
+    },
+    "pin": {
+        type:"Rác nguy hại",
+        guide:"Không vứt ra môi trường. Mang đến điểm thu gom."
+    },
+    "bóng đèn": {
+        type:"Rác nguy hại",
+        guide:"Đóng gói cẩn thận trước khi xử lý."
+    }
+};
+
+/* ================= TÌM KIẾM ================= */
+
+function searchWaste(){
+    let input = document.getElementById("searchInput").value.toLowerCase();
+    let result = document.getElementById("searchResult");
+
+    if(wasteDatabase[input]){
+        result.innerHTML =
+        "Loại rác: " + wasteDatabase[input].type +
+        "<br>Hướng dẫn: " + wasteDatabase[input].guide;
+    }else{
+        result.innerHTML = "❌ Không tìm thấy dữ liệu.";
+    }
+}
+
+/* ================= PHÂN LOẠI AI (GIẢ LẬP) ================= */
+
+function classifyWaste(){
+    let input = document.getElementById("wasteInput").value.toLowerCase();
+    let result = document.getElementById("result");
+
+    if(wasteDatabase[input]){
+        result.innerHTML =
+        "✅ AI nhận diện: <br>" +
+        "Phân loại: " + wasteDatabase[input].type +
+        "<br>Cách xử lý: " + wasteDatabase[input].guide;
+    }else{
+        result.innerHTML =
+        "⚠️ AI chưa nhận diện được. Vui lòng cập nhật dữ liệu.";
+    }
+}
+
+/* ================= GPS ĐỊNH VỊ ================= */
+
+function getLocation(){
+
+    if(navigator.geolocation){
+        navigator.geolocation.getCurrentPosition(showPosition);
+    }else{
+        alert("Trình duyệt không hỗ trợ GPS");
+    }
+}
+
+function showPosition(position){
+
+    let lat = position.coords.latitude;
+    let lon = position.coords.longitude;
+
+    document.getElementById("location").innerHTML =
+        "Vĩ độ: " + lat + "<br>Kinh độ: " + lon;
+
+    // hiển thị bản đồ Google Map
+    document.getElementById("mapFrame").src =
+        "https://maps.google.com/maps?q="+lat+","+lon+"&z=15&output=embed";
+}
+
+</script>
+
+</body>
+</html>
